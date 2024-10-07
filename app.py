@@ -68,7 +68,7 @@ with col2:
         class_name = class_names[index].strip()
         confidence_score = prediction[0][index]
 
-        st.write("Class:", class_name[2:])
+        st.write("Class:", class_name)
         st.write("Confidence Score:", confidence_score)
     else:
         st.warning("Please upload an image or capture one to proceed.")

@@ -1,6 +1,6 @@
 streamlit
-numpy
-requests
-tensorflow  # Keras มักจะใช้ร่วมกับ TensorFlow
+tensorflow
 keras
 Pillow
+requests
+numpy
