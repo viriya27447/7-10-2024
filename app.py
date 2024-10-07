@@ -121,9 +121,20 @@ with col2:
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
 
-if st.button("Show Example Table"):
+# Function to create and display the example table
+def display_example_table():
     st.subheader("Example Table")
     table_data = [["A1", "A2", "A3"],
                   ["B1", "B2", "B3"],
                   ["C1", "C2", "C3"]]
-    st.table(table_data)  # Display the table when the button is pressed
+    st.table(table_data)  # Display the table
+
+# Streamlit app section
+if st.button("Toggle Example Table"):
+    if "show_table" not in st.session_state:
+        st.session_state.show_table = False  # Initialize the state if not present
+
+    st.session_state.show_table = not st.session_state.show_table  # Toggle the state
+
+    if st.session_state.show_table:
+        display_example_table()  # Show the table if the state is True
