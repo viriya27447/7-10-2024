@@ -124,13 +124,13 @@ with col2:
 def display_image_table():
     # ข้อมูลสำหรับตาราง
     table_data = [
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fdark%20(1).png?alt=media&token=5d626d79-7203-43f9-9a14-345d94f20935", "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fgreen%20(2).png?alt=media&token=a475026b-e69a-4713-b9a2-96d7fadfcb2b"],
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Flight%20(1).png?alt=media&token=b87e27d4-0dfd-4746-a713-6ec2567d819d", "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fmedium%20(1).png?alt=media&token=3f661e8a-bf6c-4061-9a6d-19bb9994c151"],
-        ["All Image link","https://console.firebase.google.com/u/0/project/project-5195649815793865937/storage/project-5195649815793865937.appspot.com/files/~2Fcoffee%20exemple%20img?fb_gclid=Cj0KCQjwjY64BhCaARIsAIfc7YZ6-YvFh84dpWsAj1uxFn4TyOxtg1US9T_jx14kJzU413HWWcsowkkaAsGCEALw_wcB"]
+        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "Image 2", "Image 3"],
+        ["Image 4", "Image 5", "Image 6"],
+        ["Image 7", "Image 8", "Image 9"]
     ]
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
-    if st.button("Toggle Image Exemple"):
+    if st.button("Toggle Table"):
         # ใช้ session state เพื่อควบคุมการแสดงผลของตาราง
         if "show_table" not in st.session_state:
             st.session_state.show_table = True  # ตั้งค่าเริ่มต้นเป็น True
@@ -148,7 +148,7 @@ def display_image_table():
             for col, item in zip(cols, row):
                 # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
                 if item.startswith("http"):
-                    col.image(item, use_column_width=True)  # แสดงรูปภาพ
+                    col.image(item, width=col.width * 0.05)  # แสดงรูปภาพขนาด 5% ของความกว้างคอลัมน์
                 else:
                     col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
