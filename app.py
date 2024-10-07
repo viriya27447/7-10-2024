@@ -45,9 +45,32 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
+# Function to read and update visitor count
+def update_visitor_count():
+    count_file = "visitor_count.txt"
+    
+    # Check if the count file exists; if not, create it and initialize to 0
+    if not os.path.exists(count_file):
+        with open(count_file, 'w') as f:
+            f.write("0")
+    
+    # Read the current count
+    with open(count_file, 'r') as f:
+        count = int(f.read().strip())
+    
+    # Increment the count and write back to the file
+    count += 1
+    with open(count_file, 'w') as f:
+        f.write(str(count))
+    
+    return count
+
 # Streamlit app section
 st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
+# Update visitor count
+visitor_count = update_visitor_count()
+st.sidebar.write(f"Visitor Count: {visitor_count}")
 
 # Load model and labels
 model = load_custom_model()
