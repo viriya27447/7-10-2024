@@ -122,11 +122,10 @@ with col2:
         st.write("Please upload an image or take a picture to see the prediction.")
 
 def display_image_table():
-    # ข้อมูลสำหรับตาราง
+    # ข้อมูลสำหรับตาราง (2x2)
     table_data = [
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "https://via.placeholder.com/150", "https://via.placeholder.com/150"],
-        ["https://via.placeholder.com/150", "https://via.placeholder.com/150", "https://via.placeholder.com/150"],
-        ["https://via.placeholder.com/150", "https://via.placeholder.com/150", "https://via.placeholder.com/150"]
+        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "https://via.placeholder.com/150"],
+        ["https://via.placeholder.com/150", "https://via.placeholder.com/150"]
     ]
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
