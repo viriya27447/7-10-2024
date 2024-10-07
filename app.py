@@ -149,10 +149,9 @@ def display_image_table():
             for col, item in zip(cols, row):
                 # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
                 if item.startswith("http"):
-                    col.image(item, width=col.width * 0.2)  # ใช้การปรับขนาดให้พอดีกับ 20% ของความกว้างของคอลัมน์
+                    col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
                 else:
                     col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
-
