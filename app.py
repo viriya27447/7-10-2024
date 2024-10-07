@@ -142,14 +142,15 @@ def display_image_table():
         st.subheader("Image Table")
 
         # ใช้ st.columns เพื่อสร้างคอลัมน์
+        cols = st.columns(len(table_data[0]))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
         for row in table_data:
-            cols = st.columns(len(row))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
             for col, item in zip(cols, row):
                 # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
                 if item.startswith("http"):
-                    col.image(item, width=80)  # แสดงรูปภาพขนาดคงที่
+                    col.image(item, use_column_width=True)  # ใช้การปรับขนาดให้พอดีกับคอลัมน์
                 else:
                     col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
+
