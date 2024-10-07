@@ -55,8 +55,8 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# อัปโหลดรูปภาพ
-uploaded_file = st.file_uploader("Choose an image...", type="jpg")
+# อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
+uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
