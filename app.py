@@ -72,9 +72,6 @@ with col1:
             class_name = class_names[index].strip()
             confidence_score = prediction[0][index]
 
-            st.write(f"Prediction: {class_name}")
-            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
-
     else:
         # Take a picture from the camera
         camera_file = st.camera_input("Take a picture")
@@ -88,13 +85,14 @@ with col1:
             class_name = class_names[index].strip()
             confidence_score = prediction[0][index]
 
-            st.write(f"Prediction: {class_name}")
-            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
-
 with col2:
     # This section is for displaying the prediction result
     st.header("Prediction Result")
-    if mode == "Upload Image":
-        st.write("Please upload an image to see the prediction.")
+    if mode == "Upload Image" and uploaded_file is not None:
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+    elif mode == "Take a Picture" and camera_file is not None:
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
-        st.write("Please take a picture to see the prediction.")
+        st.write("Please upload an image or take a picture to see the prediction.")
