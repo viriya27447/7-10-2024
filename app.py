@@ -47,6 +47,13 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
+# Initialize visitor count (You may need to replace this with a persistent data source)
+if 'visitor_count' not in st.session_state:
+    st.session_state.visitor_count = 0
+
+# Increment visitor count
+st.session_state.visitor_count += 1
+
 # Streamlit app section
 st.title("Coffee Classifier")
 
@@ -54,25 +61,65 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# Dropdown for selecting an example
-example = st.selectbox("Select an example:", ["Example 1", "Example 2", "Example 3"])
+# Display total visitor count
+st.sidebar.header("Visitor Count")
+st.sidebar.write(f"Total Visitors: {st.session_state.visitor_count}")
 
-# Creating a table based on the selected example
-if example == "Example 1":
-    data = np.array([[1, 2, 3],
-                     [4, 5, 6],
-                     [7, 8, 9]])
-elif example == "Example 2":
-    data = np.array([[10, 11, 12],
-                     [13, 14, 15],
-                     [16, 17, 18]])
-elif example == "Example 3":
-    data = np.array([[19, 20, 21],
-                     [22, 23, 24],
-                     [25, 26, 27]])
+# Create columns for input and output
+col1, col2 = st.columns(2)
 
-# Display the table
-st.write("### Table:")
-st.dataframe(data)
+with col1:
+    # Toggle between uploading an image and taking a picture
+    mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
 
-# Rest of your Streamlit application code can go here
+    if mode == "Upload Image":
+        # Upload image (supports both PNG and JPG)
+        uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            st.image(image, caption='Uploaded Image.', use_column_width=True)
+
+            # Make predictions
+            prediction = predict(image, model, class_names)
+            index = np.argmax(prediction)
+            class_name = class_names[index].strip()
+            confidence_score = prediction[0][index]
+
+    else:
+        # Take a picture from the camera
+        camera_file = st.camera_input("Take a picture")
+        if camera_file is not None:
+            image = Image.open(camera_file)
+            st.image(image, caption='Captured Image.', use_column_width=True)
+
+            # Make predictions
+            prediction = predict(image, model, class_names)
+            index = np.argmax(prediction)
+            class_name = class_names[index].strip()
+            confidence_score = prediction[0][index]
+
+with col2:
+    # This section is for displaying the prediction result
+    st.header("Prediction Result")
+    if mode == "Upload Image" and uploaded_file is not None:
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+    elif mode == "Take a Picture" and camera_file is not None:
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+    else:
+        st.write("Please upload an image or take a picture to see the prediction.")
+
+# Simulate visitor count data for plotting
+if 'visitor_data' not in st.session_state:
+    st.session_state.visitor_data = []
+
+# Record visitor count
+st.session_state.visitor_data.append(st.session_state.visitor_count)
+
+# Display line chart for visitors
+st.subheader("Visitor Count Over Time")
+st.line_chart(st.session_state.visitor_data)
+
+# Optionally label the axes
+st.write("X-axis: Time (each visit), Y-axis: Number of Visitors")
