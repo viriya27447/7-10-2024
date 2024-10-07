@@ -7,7 +7,7 @@ import requests
 import tempfile
 import os
 import pandas as pd
-import datetime
+import matplotlib.pyplot as plt
 
 # Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
@@ -49,49 +49,32 @@ def predict(image, model, class_names):
 
 # Function to read and update visitor count
 def update_visitor_count():
-    count_file = "visitor_count.txt"
-    history_file = "visitor_history.csv"
-
-    # Check if the count file exists; if not, create it and initialize to 0
+    count_file = "visitor_count.csv"
+    
+    # Check if the count file exists; if not, create it
     if not os.path.exists(count_file):
         with open(count_file, 'w') as f:
-            f.write("0")
-
+            f.write("timestamp,count\n")  # Write header
+    
     # Read the current count
-    with open(count_file, 'r') as f:
-        count = int(f.read().strip())
+    df = pd.read_csv(count_file)
+    
+    # Get current count
+    count = len(df)  # Count is the number of rows (visitors)
+    
+    # Add new visitor
+    new_data = pd.DataFrame({"timestamp": [pd.Timestamp.now()], "count": [count + 1]})
+    df = pd.concat([df, new_data], ignore_index=True)
+    df.to_csv(count_file, index=False)  # Save updated data
 
-    # Increment the count and write back to the file
-    count += 1
-    with open(count_file, 'w') as f:
-        f.write(str(count))
-
-    # Update history
-    now = datetime.datetime.now()
-    data = {'Timestamp': [now], 'Visitor Count': [count]}
-    if not os.path.exists(history_file):
-        pd.DataFrame(data).to_csv(history_file, index=False)
-    else:
-        history_df = pd.read_csv(history_file)
-        new_df = pd.DataFrame(data)
-        combined_df = pd.concat([history_df, new_df], ignore_index=True)
-        combined_df.to_csv(history_file, index=False)
-
-    return count
+    return count, df
 
 # Streamlit app section
 st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
 # Update visitor count
-visitor_count = update_visitor_count()
+visitor_count, visitor_data = update_visitor_count()
 st.sidebar.write(f"Total Visitor Count: {visitor_count}")
-
-# Load visitor history for graphing
-history_file = "visitor_history.csv"
-if os.path.exists(history_file):
-    history_df = pd.read_csv(history_file)
-    history_df['Timestamp'] = pd.to_datetime(history_df['Timestamp'])
-    st.sidebar.line_chart(data=history_df.set_index('Timestamp')['Visitor Count'])
 
 # Load model and labels
 model = load_custom_model()
@@ -141,3 +124,14 @@ with col2:
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
+
+# Plot visitor count over time
+st.subheader("Visitor Count Over Time")
+plt.figure(figsize=(10, 5))
+plt.plot(visitor_data['timestamp'], visitor_data['count'], marker='o', linestyle='-', color='b')
+plt.title("Visitor Count Over Time")
+plt.xlabel("Timestamp")
+plt.ylabel("Total Visitors")
+plt.xticks(rotation=45)
+plt.grid()
+st.pyplot(plt)
