@@ -121,15 +121,9 @@ with col2:
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
 
-# Create a 3x3 table and display it in a message box
-st.subheader("Example Table")
-table_data = [["A1", "A2", "A3"],
-              ["B1", "B2", "B3"],
-              ["C1", "C2", "C3"]]
-st.table(table_data)  # Display the table
-
-st.latex(r'''
-    a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
-    \sum_{k=0}^{n-1} ar^k =
-    a \left(\frac{1-r^{n}}{1-r}\right)
-    ''')
+if st.button("Show Example Table"):
+    st.subheader("Example Table")
+    table_data = [["A1", "A2", "A3"],
+                  ["B1", "B2", "B3"],
+                  ["C1", "C2", "C3"]]
+    st.table(table_data)  # Display the table when the button is pressed
