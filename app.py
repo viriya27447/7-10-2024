@@ -156,7 +156,7 @@ def display_image_table():
                         col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
             
             # แสดงข้อความ "viriya" หลังจากแสดงตาราง
-            st.markdown("[Click here to visit OpenAI](https://www.openai.com)")
+            st.markdown("[more image google drive here](https://drive.google.com/drive/folders/13mdUTt9wMn-swYButWDfugoCFJoA-DHo?usp=drive_link)")
 
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
