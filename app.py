@@ -124,7 +124,7 @@ with col2:
 # Function to create and display the example table
 def display_example_table():
     st.subheader("Coffee Image Example")
-    table_data = [[https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76, "A2", "A3"],
+    table_data = [["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "A2", "A3"],
                   ["B1", "B2", "B3"],
                   ["C1", "C2", "C3"]]
     st.table(table_data)  # Display the table
