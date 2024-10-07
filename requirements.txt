@@ -2,4 +2,5 @@ streamlit
 numpy
 requests
 tensorflow  # Keras มักจะใช้ร่วมกับ TensorFlow
+keras
 Pillow
