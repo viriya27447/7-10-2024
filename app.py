@@ -130,7 +130,7 @@ def display_example_table():
     st.table(table_data)  # Display the table
 
 # Streamlit app section
-if st.button("Toggle Example Table"):
+if st.button("Image Example"):
     if "show_table" not in st.session_state:
         st.session_state.show_table = False  # Initialize the state if not present
 
