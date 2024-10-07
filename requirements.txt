@@ -1,7 +1,5 @@
 streamlit
-tensorflow
-pillow
-h5py
 numpy
-pandas
-scikit-learn
+requests
+keras
+Pillow
