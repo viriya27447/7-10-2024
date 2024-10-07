@@ -1,6 +1,6 @@
 streamlit
-tensorflow
-keras
-Pillow
-requests
 numpy
+requests
+tensorflow==2.12.0  # หรือเวอร์ชันที่เหมาะสม
+keras==2.12.0       # หรือเวอร์ชันที่เหมาะสม
+pillow
