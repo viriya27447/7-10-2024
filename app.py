@@ -6,6 +6,9 @@ from PIL import Image
 import requests
 import tempfile
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
@@ -45,32 +48,52 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
-# Function to read and update visitor count
-def update_visitor_count():
-    count_file = "visitor_count.txt"
+# Function to log visit date
+def log_visit():
+    log_file = "visitor_log.csv"
     
-    # Check if the count file exists; if not, create it and initialize to 0
-    if not os.path.exists(count_file):
-        with open(count_file, 'w') as f:
-            f.write("0")
+    # Create log file if it doesn't exist
+    if not os.path.exists(log_file):
+        with open(log_file, 'w') as f:
+            f.write("date\n")  # Create header
+
+    # Append the current date to the log file
+    with open(log_file, 'a') as f:
+        f.write(f"{datetime.now().date()}\n")
+
+# Function to read visitor log and create a DataFrame
+def get_visitor_data():
+    log_file = "visitor_log.csv"
     
-    # Read the current count
-    with open(count_file, 'r') as f:
-        count = int(f.read().strip())
-    
-    # Increment the count and write back to the file
-    count += 1
-    with open(count_file, 'w') as f:
-        f.write(str(count))
-    
-    return count
+    if os.path.exists(log_file):
+        df = pd.read_csv(log_file)
+        df['date'] = pd.to_datetime(df['date'])
+        visit_counts = df['date'].value_counts().sort_index()
+        return visit_counts
+    return pd.Series()
 
 # Streamlit app section
 st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
-# Update visitor count
-visitor_count = update_visitor_count()
-st.sidebar.write(f"Visitor Count: {visitor_count}")
+# Log the visit
+log_visit()
+
+# Load visitor data
+visitor_data = get_visitor_data()
+visitor_count = visitor_data.sum()
+
+# Display visitor count
+st.sidebar.write(f"Total Visitor Count: {visitor_count}")
+
+# Plotting the visitor data
+if not visitor_data.empty:
+    plt.figure(figsize=(10, 5))
+    visitor_data.plot(kind='bar')
+    plt.title("Visitor Count by Date")
+    plt.xlabel("Date")
+    plt.ylabel("Number of Visits")
+    plt.xticks(rotation=45)
+    st.pyplot(plt)
 
 # Load model and labels
 model = load_custom_model()
@@ -113,10 +136,10 @@ with col2:
     # This section is for displaying the prediction result
     st.header("Prediction Result")
     if mode == "Upload Image" and uploaded_file is not None:
-        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+        st.write(f"Class: {class_name}")  # Display class name
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     elif mode == "Take a Picture" and camera_file is not None:
-        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+        st.write(f"Class: {class_name}")  # Display class name
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
