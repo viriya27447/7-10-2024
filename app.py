@@ -46,7 +46,8 @@ def predict(image, model, class_names):
     return prediction
 
 # Streamlit app section
-st.title("Coffee Classifier")
+st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
+
 
 # Load model and labels
 model = load_custom_model()
