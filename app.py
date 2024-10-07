@@ -6,8 +6,6 @@ from PIL import Image
 import requests
 import tempfile
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
@@ -47,49 +45,36 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
-# Function to load and update visitor count
-def load_visitor_count():
-    try:
-        # Load the visitor count from a CSV file
-        visitor_data = pd.read_csv('visitor_count.csv')
-    except FileNotFoundError:
-        # If the file doesn't exist, create it with a starting count
-        visitor_data = pd.DataFrame({'Date': [], 'Count': []})
-        
-    # Update visitor count
-    today = pd.to_datetime('today').date()
-    if today in visitor_data['Date'].values:
-        visitor_data.loc[visitor_data['Date'] == today, 'Count'] += 1
-    else:
-        visitor_data = visitor_data.append({'Date': today, 'Count': 1}, ignore_index=True)
-
-    # Save the updated count back to the CSV file
-    visitor_data.to_csv('visitor_count.csv', index=False)
-
-    return visitor_data
+# Function to read and update visitor count
+def update_visitor_count():
+    count_file = "visitor_count.txt"
+    
+    # Check if the count file exists; if not, create it and initialize to 0
+    if not os.path.exists(count_file):
+        with open(count_file, 'w') as f:
+            f.write("0")
+    
+    # Read the current count
+    with open(count_file, 'r') as f:
+        count = int(f.read().strip())
+    
+    # Increment the count and write back to the file
+    count += 1
+    with open(count_file, 'w') as f:
+        f.write(str(count))
+    
+    return count
 
 # Streamlit app section
-st.title("Coffee Classifier")
+st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
+
+# Update visitor count
+visitor_count = update_visitor_count()
+st.sidebar.write(f"Visitor Count: {visitor_count}")
 
 # Load model and labels
 model = load_custom_model()
 class_names = load_labels()
-
-# Load visitor count
-visitor_data = load_visitor_count()
-total_visitors = visitor_data['Count'].sum()
-st.sidebar.header("Total Visitor Count")
-st.sidebar.write(f"{total_visitors} visitors")
-
-# Plotting visitor count as a line graph
-plt.figure(figsize=(10, 5))
-plt.plot(visitor_data['Date'], visitor_data['Count'], marker='o')
-plt.title("Visitor Count Over Time")
-plt.xlabel("Date")
-plt.ylabel("Visitor Count")
-plt.xticks(rotation=45)
-plt.grid()
-st.sidebar.pyplot(plt)
 
 # Create columns for input and output
 col1, col2 = st.columns(2)
@@ -128,10 +113,10 @@ with col2:
     # This section is for displaying the prediction result
     st.header("Prediction Result")
     if mode == "Upload Image" and uploaded_file is not None:
-        st.write(f"Prediction: {class_name}")
+        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     elif mode == "Take a Picture" and camera_file is not None:
-        st.write(f"Prediction: {class_name}")
+        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
