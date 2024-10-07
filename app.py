@@ -1,85 +1,70 @@
 import streamlit as st
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from PIL import Image
 import requests
 import tempfile
 import os
-from keras.models import load_model
-from PIL import Image, ImageOps
-import io
 
-# URL ของไฟล์โมเดลและไฟล์ labels ที่อยู่บน Firebase
-model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee.h5?alt=media&token=5f2aa892-3780-429f-96a3-c47ac9fbf689"
-labels_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee-labels.txt?alt=media&token=7b5cd9d4-9c27-4008-a58d-5b0db0acd8f4"
+# ฟังก์ชันสำหรับโหลดโมเดลโดยข้าม 'groups' ใน DepthwiseConv2D
+def custom_depthwise_conv2d(*args, **kwargs):
+    kwargs.pop('groups', None)  # ลบ 'groups' ถ้ามีใน kwargs
+    return tf.keras.layers.DepthwiseConv2D(*args, **kwargs)
 
-# ดาวน์โหลดโมเดล
-response = requests.get(model_url)
-model_file = io.BytesIO(response.content)
+# โหลดโมเดลจาก URL
+@st.cache_resource
+def load_custom_model():
+    model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee.h5?alt=media&token=5f2aa892-3780-429f-96a3-c47ac9fbf689"
+    temp_model_path = os.path.join(tempfile.gettempdir(), 'coffee_model.h5')
 
-# บันทึกไฟล์โมเดลชั่วคราว
-with tempfile.NamedTemporaryFile(suffix=".h5", delete=False) as temp_file:
-    temp_file.write(model_file.getbuffer())
-    temp_model_path = temp_file.name
+    # ดาวน์โหลดไฟล์โมเดลจาก URL
+    response = requests.get(model_url)
+    with open(temp_model_path, 'wb') as f:
+        f.write(response.content)
 
-# พยายามโหลดโมเดล
-try:
-    model = load_model(temp_model_path, compile=False)
-except Exception as e:
-    st.error(f"Error loading model: {str(e)}")
-    model = None
+    # โหลดโมเดลโดยใช้ custom_objects
+    model = load_model(temp_model_path, custom_objects={'DepthwiseConv2D': custom_depthwise_conv2d})
+    return model
 
-# ดาวน์โหลด labels
-response = requests.get(labels_url)
-class_names = response.text.splitlines()
+# โหลด labels จาก URL
+def load_labels():
+    labels_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee-labels.txt?alt=media&token=7b5cd9d4-9c27-4008-a58d-5b0db0acd8f4"
+    response = requests.get(labels_url)
+    class_names = response.text.splitlines()
+    return class_names
 
-# สร้างอาร์เรย์ที่มีขนาดที่ถูกต้องสำหรับโมเดล Keras
-data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+# ฟังก์ชันสำหรับทำนายผล
+def predict(image, model, class_names):
+    image = image.resize((224, 224))
+    image_array = np.asarray(image)
+    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
+    data[0] = normalized_image_array
 
-# สร้างคอลัมน์สำหรับอินพุตและเอาท์พุต
-col1, col2 = st.columns(2)
+    prediction = model.predict(data)
+    index = np.argmax(prediction)
+    class_name = class_names[index].strip()
+    confidence_score = prediction[0][index]
+    return class_name, confidence_score
 
-with col1:
-    st.header("Input")
-    option = st.selectbox("Choose input method", ("Upload Image", "Open Camera"))
+# ส่วนของ Streamlit app
+st.title("Coffee Classifier")
 
-    image = None  # กำหนดค่าเริ่มต้นของ image เป็น None
+# โหลดโมเดลและ labels
+model = load_custom_model()
+class_names = load_labels()
 
-    if option == "Upload Image":
-        uploaded_image = st.file_uploader("Choose an image...", type=["jpg", "png"])
+# อัปโหลดรูปภาพ
+uploaded_file = st.file_uploader("Choose an image...", type="jpg")
 
-        if uploaded_image is not None:
-            image = Image.open(uploaded_image).convert("RGB")
-            st.image(image, caption='Uploaded Image', use_column_width=True)
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-    elif option == "Open Camera":
-        uploaded_image = st.camera_input("Take a picture")
-
-        if uploaded_image is not None:
-            image = Image.open(uploaded_image).convert("RGB")
-            st.image(image, caption='Captured Image', use_column_width=True)
-
-with col2:
-    st.header("Output")
-
-    if image is not None:
-        size = (224, 224)
-        image = ImageOps.fit(image, size, Image.BICUBIC)
-        image_array = np.asarray(image)
-        normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
-        data[0] = normalized_image_array
-
-        # ตรวจสอบว่าโมเดลถูกโหลดหรือไม่
-        if model:
-            prediction = model.predict(data)
-            index = np.argmax(prediction)
-            class_name = class_names[index].strip()
-            confidence_score = prediction[0][index]
-
-            st.write("Class:", class_name[2:])  # ตัดข้อความ "[#]" ออก
-            st.write("Confidence Score:", confidence_score)
-        else:
-            st.error("Model not loaded. Please check the model path or permissions.")
-    else:
-        st.warning("Please upload an image or capture one to proceed.")
-
-# ลบไฟล์ชั่วคราวเมื่อเสร็จสิ้น
-os.remove(temp_model_path)
+    # ทำนายผล
+    class_name, confidence_score = predict(image, model, class_names)
+    
+    # แสดงผลการทำนาย
+    st.write(f"Prediction: {class_name}")
+    st.write(f"Confidence: {confidence_score:.2f}")
