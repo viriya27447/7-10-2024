@@ -131,7 +131,7 @@ def display_image_table():
     ]
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
-    if st.button("Image Exemple"):
+    if st.button("Image Example"):
         # ใช้ session state เพื่อควบคุมการแสดงผลของตาราง
         if "show_table" not in st.session_state:
             st.session_state.show_table = True  # ตั้งค่าเริ่มต้นเป็น True
@@ -143,15 +143,17 @@ def display_image_table():
     if st.session_state.get("show_table", False):
         st.subheader("Image Table")
 
-        # ใช้ st.columns เพื่อสร้างคอลัมน์
-        cols = st.columns(len(table_data[0]))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
-        for row in table_data:
-            for col, item in zip(cols, row):
-                # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
-                if item.startswith("http"):
-                    col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
-                else:
-                    col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
+        # ใช้ container เพื่อจัดกลาง
+        with st.container():
+            # สร้างคอลัมน์เพื่อจัดรูปภาพกลาง
+            cols = st.columns(len(table_data[0]))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
+            for row in table_data:
+                for col, item in zip(cols, row):
+                    # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
+                    if item.startswith("http"):
+                        col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
+                    else:
+                        col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
