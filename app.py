@@ -52,10 +52,10 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# Toggle สำหรับเลือกโหมด
-mode = st.radio("Select Mode:", ["Upload Image", "Take a Picture"], index=0)
+# สวิตช์ระหว่างการอัปโหลดรูปภาพและการถ่ายภาพสด
+mode = st.toggle("Select Mode", ["อัปโหลดรูป", "ถ่ายรูป"])
 
-if mode == "Upload Image":
+if mode == "อัปโหลดรูป":
     # อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
     uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
     if uploaded_file is not None:
