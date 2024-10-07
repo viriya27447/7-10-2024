@@ -146,9 +146,8 @@ def display_image_table():
         for row in table_data:
             for col, item in zip(cols, row):
                 # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
-                if item.startswith("http"):
-                    col.image(item, width=80) 
-                    col.image(item, use_column_width=True)  # ใช้การปรับขนาดให้พอดีกับคอลัมน์
+                if item.startswith("http"): 
+                    col.image(item, use_column_width=True, width=80)  # ใช้การปรับขนาดให้พอดีกับคอลัมน์
                 else:
                     col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
