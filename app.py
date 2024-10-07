@@ -124,8 +124,10 @@ with col2:
 def display_image_table():
     # ข้อมูลสำหรับตาราง (2x2)
     table_data = [
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "https://via.placeholder.com/150"],
-        ["https://via.placeholder.com/150", "https://via.placeholder.com/150"]
+        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", 
+         "https://via.placeholder.com/150"],
+        ["https://via.placeholder.com/150", 
+         "https://via.placeholder.com/150"]
     ]
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
@@ -146,8 +148,8 @@ def display_image_table():
         for row in table_data:
             for col, item in zip(cols, row):
                 # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
-                if item.startswith("http"): 
-                    col.image(item, use_column_width=True, width=80)  # ใช้การปรับขนาดให้พอดีกับคอลัมน์
+                if item.startswith("http"):
+                    col.image(item, width=col.width * 0.2)  # ใช้การปรับขนาดให้พอดีกับ 20% ของความกว้างของคอลัมน์
                 else:
                     col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
