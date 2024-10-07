@@ -53,7 +53,7 @@ model = load_custom_model()
 class_names = load_labels()
 
 # สวิตช์ระหว่างการอัปโหลดรูปภาพและการถ่ายภาพสด
-mode = st.toggle("Select Mode", ["อัปโหลดรูป", "ถ่ายรูป"])
+mode = st.radio("Select Mode", ["อัปโหลดรูป", "ถ่ายรูป"])
 
 if mode == "อัปโหลดรูป":
     # อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
