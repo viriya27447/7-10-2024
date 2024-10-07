@@ -55,16 +55,33 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
-uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+# ตัวเลือกสำหรับการอัปโหลดไฟล์หรือถ่ายภาพสด
+option = st.selectbox("Select input method", ("Upload Image", "Take a Photo"))
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Image.', use_column_width=True)
+if option == "Upload Image":
+    # อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
+    uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-    # ทำนายผล
-    class_name, confidence_score = predict(image, model, class_names)
-    
-    # แสดงผลการทำนาย
-    st.write(f"Prediction: {class_name}")
-    st.write(f"Confidence: {confidence_score:.2f}")
+        # ทำนายผล
+        class_name, confidence_score = predict(image, model, class_names)
+
+        # แสดงผลการทำนาย
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score:.2f}")
+
+elif option == "Take a Photo":
+    # ถ่ายภาพจากกล้อง
+    camera_file = st.camera_input("Take a picture")
+    if camera_file is not None:
+        image = Image.open(camera_file)
+        st.image(image, caption='Captured Image.', use_column_width=True)
+
+        # ทำนายผล
+        class_name, confidence_score = predict(image, model, class_names)
+
+        # แสดงผลการทำนาย
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score:.2f}")
