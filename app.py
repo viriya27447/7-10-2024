@@ -43,10 +43,7 @@ def predict(image, model, class_names):
     data[0] = normalized_image_array
 
     prediction = model.predict(data)
-    index = np.argmax(prediction)
-    class_name = class_names[index].strip()
-    confidence_score = prediction[0][index]
-    return class_name, confidence_score
+    return prediction
 
 # ส่วนของ Streamlit app
 st.title("Coffee Classifier")
@@ -55,10 +52,13 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# สวิตช์สำหรับเลือกการอัปโหลดรูปภาพหรือถ่ายภาพสด
-upload_image = st.checkbox("Upload Image", value=True)
+# สร้าง select slider สำหรับการเลือก Normalized หรือ Absolute
+display_mode = st.select_slider("Displayed values:", ["Normalized", "Absolute"])
 
-if upload_image:
+# สวิตช์ระหว่างการอัปโหลดรูปภาพและการถ่ายภาพสด
+mode = st.select_slider("Select Mode", ["Upload Image", "Take a Picture"])
+
+if mode == "Upload Image":
     # อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
     uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
     if uploaded_file is not None:
@@ -66,11 +66,18 @@ if upload_image:
         st.image(image, caption='Uploaded Image.', use_column_width=True)
 
         # ทำนายผล
-        class_name, confidence_score = predict(image, model, class_names)
+        prediction = predict(image, model, class_names)
+        index = np.argmax(prediction)
+        class_name = class_names[index].strip()
+        confidence_score = prediction[0][index]
 
-        # แสดงผลการทำนาย
-        st.write(f"Prediction: {class_name}")
-        st.write(f"Confidence: {confidence_score:.2f}")
+        # แสดงผลการทำนายตามโหมด
+        if display_mode == "Normalized":
+            st.write(f"Prediction: {class_name} (Normalized)")
+            st.write(f"Confidence: {confidence_score:.2f}")
+        else:
+            st.write(f"Prediction: {class_name} (Absolute)")
+            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # เปลี่ยนเป็นเปอร์เซ็นต์
 
 else:
     # ถ่ายภาพจากกล้อง
@@ -80,8 +87,15 @@ else:
         st.image(image, caption='Captured Image.', use_column_width=True)
 
         # ทำนายผล
-        class_name, confidence_score = predict(image, model, class_names)
+        prediction = predict(image, model, class_names)
+        index = np.argmax(prediction)
+        class_name = class_names[index].strip()
+        confidence_score = prediction[0][index]
 
-        # แสดงผลการทำนาย
-        st.write(f"Prediction: {class_name}")
-        st.write(f"Confidence: {confidence_score:.2f}")
+        # แสดงผลการทำนายตามโหมด
+        if display_mode == "Normalized":
+            st.write(f"Prediction: {class_name} (Normalized)")
+            st.write(f"Confidence: {confidence_score:.2f}")
+        else:
+            st.write(f"Prediction: {class_name} (Absolute)")
+            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # เปลี่ยนเป็นเปอร์เซ็นต์
