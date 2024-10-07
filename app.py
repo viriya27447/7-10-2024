@@ -52,9 +52,6 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# สร้าง select slider สำหรับการเลือก Normalized หรือ Absolute
-display_mode = st.select_slider("Displayed values:", ["Normalized", "Absolute"])
-
 # สวิตช์ระหว่างการอัปโหลดรูปภาพและการถ่ายภาพสด
 mode = st.select_slider("Select Mode", ["Upload Image", "Take a Picture"])
 
@@ -71,13 +68,8 @@ if mode == "Upload Image":
         class_name = class_names[index].strip()
         confidence_score = prediction[0][index]
 
-        # แสดงผลการทำนายตามโหมด
-        if display_mode == "Normalized":
-            st.write(f"Prediction: {class_name} (Normalized)")
-            st.write(f"Confidence: {confidence_score:.2f}")
-        else:
-            st.write(f"Prediction: {class_name} (Absolute)")
-            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # เปลี่ยนเป็นเปอร์เซ็นต์
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # แสดงเป็นเปอร์เซ็นต์
 
 else:
     # ถ่ายภาพจากกล้อง
@@ -92,10 +84,5 @@ else:
         class_name = class_names[index].strip()
         confidence_score = prediction[0][index]
 
-        # แสดงผลการทำนายตามโหมด
-        if display_mode == "Normalized":
-            st.write(f"Prediction: {class_name} (Normalized)")
-            st.write(f"Confidence: {confidence_score:.2f}")
-        else:
-            st.write(f"Prediction: {class_name} (Absolute)")
-            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # เปลี่ยนเป็นเปอร์เซ็นต์
+        st.write(f"Prediction: {class_name}")
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # แสดงเป็นเปอร์เซ็นต์
