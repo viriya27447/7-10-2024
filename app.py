@@ -121,8 +121,6 @@ with col2:
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
 
-import streamlit as st
-
 def display_image_table():
     # ข้อมูลสำหรับตาราง
     table_data = [
@@ -131,18 +129,28 @@ def display_image_table():
         ["Image 7", "Image 8", "Image 9"]
     ]
     
-    # แสดงหัวข้อของตาราง
-    st.subheader("Image Table")
+    # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
+    if st.button("Toggle Table"):
+        # ใช้ session state เพื่อควบคุมการแสดงผลของตาราง
+        if "show_table" not in st.session_state:
+            st.session_state.show_table = True  # ตั้งค่าเริ่มต้นเป็น True
+            
+        # สลับสถานะการแสดงผล
+        st.session_state.show_table = not st.session_state.show_table
 
-    # ใช้ st.columns เพื่อสร้างคอลัมน์
-    for row in table_data:
-        cols = st.columns(len(row))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
-        for col, item in zip(cols, row):
-            # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
-            if item.startswith("http"):
-                col.image(item, use_column_width=True)  # แสดงรูปภาพ
-            else:
-                col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
+    # แสดงตารางถ้าสถานะ show_table เป็น True
+    if st.session_state.get("show_table", False):
+        st.subheader("Image Table")
+
+        # ใช้ st.columns เพื่อสร้างคอลัมน์
+        for row in table_data:
+            cols = st.columns(len(row))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
+            for col, item in zip(cols, row):
+                # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
+                if item.startswith("http"):
+                    col.image(item, use_column_width=True)  # แสดงรูปภาพ
+                else:
+                    col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
