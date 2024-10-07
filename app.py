@@ -69,7 +69,7 @@ with col1:
             # Make predictions
             prediction = predict(image, model, class_names)
             index = np.argmax(prediction)
-            class_name = class_names[index].strip()[:-2]  # Trim the last two characters
+            class_name = class_names[index].strip()[:-2]  # Remove the last two characters
             confidence_score = prediction[0][index]
 
     else:
@@ -82,7 +82,7 @@ with col1:
             # Make predictions
             prediction = predict(image, model, class_names)
             index = np.argmax(prediction)
-            class_name = class_names[index].strip()[:-2]  # Trim the last two characters
+            class_name = class_names[index].strip()[:-2]  # Remove the last two characters
             confidence_score = prediction[0][index]
 
 with col2:
