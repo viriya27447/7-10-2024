@@ -121,20 +121,28 @@ with col2:
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
 
-# Function to create and display the example table
-def display_example_table():
-    st.subheader("Coffee Image Example")
-    table_data = [["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "A2", "A3"],
-                  ["B1", "B2", "B3"],
-                  ["C1", "C2", "C3"]]
-    st.table(table_data)  # Display the table
+import streamlit as st
 
-# Streamlit app section
-if st.button("Image Example"):
-    if "show_table" not in st.session_state:
-        st.session_state.show_table = False  # Initialize the state if not present
+def display_image_table():
+    # ข้อมูลสำหรับตาราง
+    table_data = [
+        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", "Image 2", "Image 3"],
+        ["Image 4", "Image 5", "Image 6"],
+        ["Image 7", "Image 8", "Image 9"]
+    ]
+    
+    # แสดงหัวข้อของตาราง
+    st.subheader("Image Table")
 
-    st.session_state.show_table = not st.session_state.show_table  # Toggle the state
+    # ใช้ st.columns เพื่อสร้างคอลัมน์
+    for row in table_data:
+        cols = st.columns(len(row))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
+        for col, item in zip(cols, row):
+            # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
+            if item.startswith("http"):
+                col.image(item, use_column_width=True)  # แสดงรูปภาพ
+            else:
+                col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
 
-    if st.session_state.show_table:
-        display_example_table()  # Show the table if the state is True
+# เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
+display_image_table()
