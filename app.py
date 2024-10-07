@@ -89,10 +89,10 @@ with col2:
     # This section is for displaying the prediction result
     st.header("Prediction Result")
     if mode == "Upload Image" and uploaded_file is not None:
-        st.write(f"Class: {class_name}")  # Display full class name
+        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     elif mode == "Take a Picture" and camera_file is not None:
-        st.write(f"Class: {class_name}")  # Display full class name
+        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
