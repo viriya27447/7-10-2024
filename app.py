@@ -129,7 +129,6 @@ def display_image_table():
         ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Flight%20(1).png?alt=media&token=b87e27d4-0dfd-4746-a713-6ec2567d819d", 
          "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fmedium%20(1).png?alt=media&token=3f661e8a-bf6c-4061-9a6d-19bb9994c151"]
     ]
-    st.write('hello')
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
     if st.button("Image Example"):
@@ -155,6 +154,9 @@ def display_image_table():
                         col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
                     else:
                         col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
+            
+            # แสดงข้อความ "viriya" หลังจากแสดงตาราง
+            st.write("viriya")
 
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
