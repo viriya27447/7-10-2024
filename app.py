@@ -156,6 +156,6 @@ def display_image_table():
                         col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
             
             # แสดงข้อความ "viriya" หลังจากแสดงตาราง
-            st.markdown("ลิงค์สำหรับกด: [ตรงนี้](https://drive.google.com/drive/folders/13mdUTt9wMn-swYButWDfugoCFJoA-DHo?usp=drive_link)")
+            st.markdown("See More : [https://drive.google.com/drive/folders/AI/รูปกาแฟคั่วถ่ายเอง+kaggle](https://drive.google.com/drive/folders/13mdUTt9wMn-swYButWDfugoCFJoA-DHo?usp=drive_link)")
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
