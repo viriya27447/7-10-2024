@@ -20,8 +20,14 @@ with tempfile.NamedTemporaryFile(suffix=".h5", delete=False) as temp_file:
     temp_file.write(model_file.getbuffer())
     temp_model_path = temp_file.name
 
-# โหลดโมเดล
-model = load_model(temp_model_path, compile=False)
+# ตรวจสอบว่าไฟล์ถูกบันทึกลงไปและมีขนาดที่ถูกต้อง
+if os.path.exists(temp_model_path) and os.path.getsize(temp_model_path) > 0:
+    try:
+        model = load_model(temp_model_path, compile=False)
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+else:
+    st.error("Failed to download or save the model file.")
 
 # ดาวน์โหลด labels
 response = requests.get(labels_url)
@@ -68,7 +74,7 @@ with col2:
         class_name = class_names[index].strip()
         confidence_score = prediction[0][index]
 
-        st.write("Class:", class_name)
+        st.write("Class:", class_name[2:])
         st.write("Confidence Score:", confidence_score)
     else:
         st.warning("Please upload an image or capture one to proceed.")
