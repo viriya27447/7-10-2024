@@ -55,10 +55,10 @@ st.title("Coffee Classifier")
 model = load_custom_model()
 class_names = load_labels()
 
-# ตัวเลือกสำหรับการอัปโหลดไฟล์หรือถ่ายภาพสด
-option = st.selectbox("Select input method", ("Upload Image", "Take a Photo"))
+# สวิตช์สำหรับเลือกการอัปโหลดรูปภาพหรือถ่ายภาพสด
+upload_image = st.checkbox("Upload Image", value=True)
 
-if option == "Upload Image":
+if upload_image:
     # อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
     uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
     if uploaded_file is not None:
@@ -72,7 +72,7 @@ if option == "Upload Image":
         st.write(f"Prediction: {class_name}")
         st.write(f"Confidence: {confidence_score:.2f}")
 
-elif option == "Take a Photo":
+else:
     # ถ่ายภาพจากกล้อง
     camera_file = st.camera_input("Take a picture")
     if camera_file is not None:
