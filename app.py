@@ -131,7 +131,7 @@ def display_image_table():
     ]
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
-    if st.button("Toggle Table"):
+    if st.button("Image Exemple"):
         # ใช้ session state เพื่อควบคุมการแสดงผลของตาราง
         if "show_table" not in st.session_state:
             st.session_state.show_table = True  # ตั้งค่าเริ่มต้นเป็น True
