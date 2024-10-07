@@ -120,3 +120,10 @@ with col2:
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
+
+# Create a 3x3 table and display it in a message box
+st.subheader("Example Table")
+table_data = [["A1", "A2", "A3"],
+              ["B1", "B2", "B3"],
+              ["C1", "C2", "C3"]]
+st.table(table_data)  # Display the table
