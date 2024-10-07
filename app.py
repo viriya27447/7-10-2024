@@ -7,34 +7,34 @@ import requests
 import tempfile
 import os
 
-# ฟังก์ชันสำหรับโหลดโมเดลโดยข้าม 'groups' ใน DepthwiseConv2D
+# Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
-    kwargs.pop('groups', None)  # ลบ 'groups' ถ้ามีใน kwargs
+    kwargs.pop('groups', None)  # Remove 'groups' if present in kwargs
     return tf.keras.layers.DepthwiseConv2D(*args, **kwargs)
 
-# โหลดโมเดลจาก URL
+# Load the model from the URL
 @st.cache_resource
 def load_custom_model():
     model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee.h5?alt=media&token=5f2aa892-3780-429f-96a3-c47ac9fbf689"
     temp_model_path = os.path.join(tempfile.gettempdir(), 'coffee_model.h5')
 
-    # ดาวน์โหลดไฟล์โมเดลจาก URL
+    # Download the model file from the URL
     response = requests.get(model_url)
     with open(temp_model_path, 'wb') as f:
         f.write(response.content)
 
-    # โหลดโมเดลโดยใช้ custom_objects
+    # Load the model using custom_objects
     model = load_model(temp_model_path, custom_objects={'DepthwiseConv2D': custom_depthwise_conv2d})
     return model
 
-# โหลด labels จาก URL
+# Load labels from the URL
 def load_labels():
     labels_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee-labels.txt?alt=media&token=7b5cd9d4-9c27-4008-a58d-5b0db0acd8f4"
     response = requests.get(labels_url)
     class_names = response.text.splitlines()
     return class_names
 
-# ฟังก์ชันสำหรับทำนายผล
+# Function to make predictions
 def predict(image, model, class_names):
     image = image.resize((224, 224))
     image_array = np.asarray(image)
@@ -45,44 +45,56 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
-# ส่วนของ Streamlit app
+# Streamlit app section
 st.title("Coffee Classifier")
 
-# โหลดโมเดลและ labels
+# Load model and labels
 model = load_custom_model()
 class_names = load_labels()
 
-# สวิตช์ระหว่างการอัปโหลดรูปภาพและการถ่ายภาพสด
-mode = st.radio("Select Mode", ["อัปโหลดรูป", "ถ่ายรูป"])
+# Create columns for input and output
+col1, col2 = st.columns(2)
 
-if mode == "อัปโหลดรูป":
-    # อัปโหลดรูปภาพ (รองรับทั้ง PNG และ JPG)
-    uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Image.', use_column_width=True)
+with col1:
+    # Toggle between uploading an image and taking a picture
+    mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
 
-        # ทำนายผล
-        prediction = predict(image, model, class_names)
-        index = np.argmax(prediction)
-        class_name = class_names[index].strip()
-        confidence_score = prediction[0][index]
+    if mode == "Upload Image":
+        # Upload image (supports both PNG and JPG)
+        uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-        st.write(f"Prediction: {class_name}")
-        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # แสดงเป็นเปอร์เซ็นต์
+            # Make predictions
+            prediction = predict(image, model, class_names)
+            index = np.argmax(prediction)
+            class_name = class_names[index].strip()
+            confidence_score = prediction[0][index]
 
-else:
-    # ถ่ายภาพจากกล้อง
-    camera_file = st.camera_input("Take a picture")
-    if camera_file is not None:
-        image = Image.open(camera_file)
-        st.image(image, caption='Captured Image.', use_column_width=True)
+            st.write(f"Prediction: {class_name}")
+            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
 
-        # ทำนายผล
-        prediction = predict(image, model, class_names)
-        index = np.argmax(prediction)
-        class_name = class_names[index].strip()
-        confidence_score = prediction[0][index]
+    else:
+        # Take a picture from the camera
+        camera_file = st.camera_input("Take a picture")
+        if camera_file is not None:
+            image = Image.open(camera_file)
+            st.image(image, caption='Captured Image.', use_column_width=True)
 
-        st.write(f"Prediction: {class_name}")
-        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # แสดงเป็นเปอร์เซ็นต์
+            # Make predictions
+            prediction = predict(image, model, class_names)
+            index = np.argmax(prediction)
+            class_name = class_names[index].strip()
+            confidence_score = prediction[0][index]
+
+            st.write(f"Prediction: {class_name}")
+            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+
+with col2:
+    # This section is for displaying the prediction result
+    st.header("Prediction Result")
+    if mode == "Upload Image":
+        st.write("Please upload an image to see the prediction.")
+    else:
+        st.write("Please take a picture to see the prediction.")
