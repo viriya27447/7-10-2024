@@ -124,10 +124,10 @@ with col2:
 def display_image_table():
     # ข้อมูลสำหรับตาราง (2x2)
     table_data = [
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/8dcdb941320e802ee28d9e31c9904c26.jpg?alt=media&token=cde1d324-15ff-42f0-838e-8c6fd954aa76", 
-         "https://via.placeholder.com/150"],
-        ["https://via.placeholder.com/150", 
-         "https://via.placeholder.com/150"]
+        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fdark%20(1).png?alt=media&token=5d626d79-7203-43f9-9a14-345d94f20935", 
+         "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fgreen%20(2).png?alt=media&token=a475026b-e69a-4713-b9a2-96d7fadfcb2b"],
+        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Flight%20(1).png?alt=media&token=b87e27d4-0dfd-4746-a713-6ec2567d819d", 
+         "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fmedium%20(1).png?alt=media&token=3f661e8a-bf6c-4061-9a6d-19bb9994c151"]
     ]
     
     # สร้างปุ่มสำหรับซ่อน/แสดงตาราง
