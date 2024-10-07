@@ -1,6 +1,7 @@
 streamlit
 numpy
-requests
 tensorflow
-keras
-pillow
+Pillow
+requests
+pandas
+matplotlib
