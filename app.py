@@ -160,4 +160,4 @@ def display_image_table():
 # เรียกใช้ฟังก์ชันเพื่อแสดงตาราง
 display_image_table()
 
-st.write('Presented by : Group 5 Student ID 65050225,65050686,6050378,65050838')
+st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
