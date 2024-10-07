@@ -47,38 +47,29 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
-# Function to read and update visitor count
-def update_visitor_count():
-    count_file = "visitor_count.csv"
-    
-    # Check if the count file exists; if not, create it
-    if not os.path.exists(count_file):
-        with open(count_file, 'w') as f:
-            f.write("timestamp,count\n")  # Write header
-    
-    # Read the current count
-    df = pd.read_csv(count_file)
-    
-    # Get current count
-    count = len(df)  # Count is the number of rows (visitors)
-    
-    # Add new visitor
-    new_data = pd.DataFrame({"timestamp": [pd.Timestamp.now()], "count": [count + 1]})
-    df = pd.concat([df, new_data], ignore_index=True)
-    df.to_csv(count_file, index=False)  # Save updated data
+# Function to load or initialize visitor count
+def load_visitor_count():
+    # Initialize or load visitor count from session state
+    if 'visitor_count' not in st.session_state:
+        st.session_state.visitor_count = 0
 
-    return count, df
+    # Increment visitor count and store in session state
+    st.session_state.visitor_count += 1
+    return st.session_state.visitor_count
 
 # Streamlit app section
-st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
-
-# Update visitor count
-visitor_count, visitor_data = update_visitor_count()
-st.sidebar.write(f"Total Visitor Count: {visitor_count}")
+st.title("Coffee Classifier", anchor="center")
 
 # Load model and labels
 model = load_custom_model()
 class_names = load_labels()
+
+# Load visitor count
+total_visitors = load_visitor_count()
+
+# Display total visitor count
+st.sidebar.header("Visitor Info")
+st.sidebar.write(f"Total Visitor Count: {total_visitors}")
 
 # Create columns for input and output
 col1, col2 = st.columns(2)
@@ -117,21 +108,33 @@ with col2:
     # This section is for displaying the prediction result
     st.header("Prediction Result")
     if mode == "Upload Image" and uploaded_file is not None:
-        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+        st.write(f"Prediction: {class_name[2:]}")
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     elif mode == "Take a Picture" and camera_file is not None:
-        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+        st.write(f"Prediction: {class_name[2:]}")
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
 
-# Plot visitor count over time
-st.subheader("Visitor Count Over Time")
+# Visitor Count Line Graph
+st.header("Visitor Count Over Time")
+# Simulated data for demonstration purposes
+if 'visitor_counts' not in st.session_state:
+    st.session_state.visitor_counts = []
+
+st.session_state.visitor_counts.append(total_visitors)
+
+# Create a DataFrame for plotting
+visitor_df = pd.DataFrame({
+    'Visitors': st.session_state.visitor_counts
+})
+
+# Plotting the line graph
 plt.figure(figsize=(10, 5))
-plt.plot(visitor_data['timestamp'], visitor_data['count'], marker='o', linestyle='-', color='b')
-plt.title("Visitor Count Over Time")
-plt.xlabel("Timestamp")
+plt.plot(visitor_df['Visitors'], marker='o')
+plt.title("Total Visitors Count")
+plt.xlabel("Time (Visits)")
 plt.ylabel("Total Visitors")
-plt.xticks(rotation=45)
+plt.xticks(ticks=range(len(visitor_df)), labels=range(1, len(visitor_df) + 1))
 plt.grid()
 st.pyplot(plt)
