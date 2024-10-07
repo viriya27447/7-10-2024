@@ -7,7 +7,7 @@ from keras.models import load_model
 from PIL import Image, ImageOps
 import io
 
-# URL ของไฟล์โมเดลและไฟล์ labels ที่อยู่บน GitHub
+# URL ของไฟล์โมเดลและไฟล์ labels ที่อยู่บน Firebase
 model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee.h5?alt=media&token=5f2aa892-3780-429f-96a3-c47ac9fbf689"
 labels_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee-labels.txt?alt=media&token=7b5cd9d4-9c27-4008-a58d-5b0db0acd8f4"
 
@@ -20,11 +20,12 @@ with tempfile.NamedTemporaryFile(suffix=".h5", delete=False) as temp_file:
     temp_file.write(model_file.getbuffer())
     temp_model_path = temp_file.name
 
-# โหลดโมเดล
+# พยายามโหลดโมเดล
 try:
     model = load_model(temp_model_path, compile=False)
 except Exception as e:
-    st.error(f"Error loading model: {e}")
+    st.error(f"Error loading model: {str(e)}")
+    model = None
 
 # ดาวน์โหลด labels
 response = requests.get(labels_url)
@@ -40,7 +41,7 @@ with col1:
     st.header("Input")
     option = st.selectbox("Choose input method", ("Upload Image", "Open Camera"))
 
-    image = None  # Initialize image variable
+    image = None  # กำหนดค่าเริ่มต้นของ image เป็น None
 
     if option == "Upload Image":
         uploaded_image = st.file_uploader("Choose an image...", type=["jpg", "png"])
@@ -66,13 +67,17 @@ with col2:
         normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
         data[0] = normalized_image_array
 
-        prediction = model.predict(data)
-        index = np.argmax(prediction)
-        class_name = class_names[index].strip()
-        confidence_score = prediction[0][index]
+        # ตรวจสอบว่าโมเดลถูกโหลดหรือไม่
+        if model:
+            prediction = model.predict(data)
+            index = np.argmax(prediction)
+            class_name = class_names[index].strip()
+            confidence_score = prediction[0][index]
 
-        st.write("Class:", class_name)
-        st.write("Confidence Score:", confidence_score)
+            st.write("Class:", class_name[2:])  # ตัดข้อความ "[#]" ออก
+            st.write("Confidence Score:", confidence_score)
+        else:
+            st.error("Model not loaded. Please check the model path or permissions.")
     else:
         st.warning("Please upload an image or capture one to proceed.")
 
