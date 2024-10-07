@@ -6,8 +6,6 @@ from PIL import Image
 import requests
 import tempfile
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
@@ -47,23 +45,36 @@ def predict(image, model, class_names):
     prediction = model.predict(data)
     return prediction
 
-# Initialize visitor count (You may need to replace this with a persistent data source)
-if 'visitor_count' not in st.session_state:
-    st.session_state.visitor_count = 0
-
-# Increment visitor count
-st.session_state.visitor_count += 1
+# Function to read and update visitor count
+def update_visitor_count():
+    count_file = "visitor_count.txt"
+    
+    # Check if the count file exists; if not, create it and initialize to 0
+    if not os.path.exists(count_file):
+        with open(count_file, 'w') as f:
+            f.write("0")
+    
+    # Read the current count
+    with open(count_file, 'r') as f:
+        count = int(f.read().strip())
+    
+    # Increment the count and write back to the file
+    count += 1
+    with open(count_file, 'w') as f:
+        f.write(str(count))
+    
+    return count
 
 # Streamlit app section
-st.title("Coffee Classifier")
+st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
+
+# Update visitor count
+visitor_count = update_visitor_count()
+st.sidebar.write(f"Visitor Count: {visitor_count}")
 
 # Load model and labels
 model = load_custom_model()
 class_names = load_labels()
-
-# Display total visitor count
-st.sidebar.header("Visitor Count")
-st.sidebar.write(f"Total Visitors: {st.session_state.visitor_count}")
 
 # Create columns for input and output
 col1, col2 = st.columns(2)
@@ -102,24 +113,10 @@ with col2:
     # This section is for displaying the prediction result
     st.header("Prediction Result")
     if mode == "Upload Image" and uploaded_file is not None:
-        st.write(f"Prediction: {class_name}")
+        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     elif mode == "Take a Picture" and camera_file is not None:
-        st.write(f"Prediction: {class_name}")
+        st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
         st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
     else:
         st.write("Please upload an image or take a picture to see the prediction.")
-
-# Simulate visitor count data for plotting
-if 'visitor_data' not in st.session_state:
-    st.session_state.visitor_data = []
-
-# Record visitor count
-st.session_state.visitor_data.append(st.session_state.visitor_count)
-
-# Display line chart for visitors
-st.subheader("Visitor Count Over Time")
-st.line_chart(st.session_state.visitor_data)
-
-# Optionally label the axes
-st.write("X-axis: Time (each visit), Y-axis: Number of Visitors")
