@@ -8,7 +8,10 @@ st.set_page_config(page_title="Remove BG - AI Background Removal Tool", layout="
 st.markdown(
     """
     <style>
-    .main {
+    .reportview-container {
+        background-color: #1E1E1E;
+    }
+    .sidebar .sidebar-content {
         background-color: #1E1E1E;
     }
     </style>
@@ -16,8 +19,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# โครงสร้างแอป
-col1, col2 = st.columns([3, 7])  # แบ่งคอลัมน์
+# แบ่งคอลัมน์
+col1, col2 = st.columns([3, 7])  # คอลัมน์ซ้าย 30% ขวา 70%
 
 # ส่วนสำหรับอัปโหลดรูปภาพ
 with col1:
