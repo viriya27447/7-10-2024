@@ -163,10 +163,5 @@ def page1():
 def page2():
     st.write('hello2')
 
-# ใช้ st.sidebar เพื่อให้เลือกหน้าได้
-page = st.sidebar.radio("Select Page", ["Page 1", "Page 2"])
-
-if page == "Page 1":
-    page1()
-else:
-    page2()
+pg = st.navigation([st.Page(page1), st.Page(page2)])
+pg.run()
