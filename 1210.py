@@ -1,10 +1,10 @@
 import streamlit as st
 
 def page1():
-    st.write(st.session_state.foo)
+    st.write('hello1')
 
 def page2():
-    st.write(st.session_state.bar)
+    st.write('hello2')
 
 pg = st.navigation([st.Page(page1), st.Page(page2)])
 pg.run()
