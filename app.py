@@ -15,7 +15,7 @@ def custom_depthwise_conv2d(*args, **kwargs):
 # Load the model from the URL
 @st.cache_resource
 def load_custom_model():
-    model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee.h5?alt=media&token=5f2aa892-3780-429f-96a3-c47ac9fbf689"
+    model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/12102024.h5?alt=media&token=8cdfbf0a-4ec6-4e59-bd35-d420890f8166"
     temp_model_path = os.path.join(tempfile.gettempdir(), 'coffee_model.h5')
 
     # Download the model file from the URL
