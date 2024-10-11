@@ -7,7 +7,6 @@ import requests
 import tempfile
 import os
 def page1():
-    st.write('hello1')
 # Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
     kwargs.pop('groups', None)  # Remove 'groups' if present in kwargs
