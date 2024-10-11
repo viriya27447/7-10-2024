@@ -16,16 +16,24 @@ def page2():
     st.title("หน้า 2")
     st.write("สถานะของ Bar:", "เปิด" if st.session_state.bar else "ปิด")
 
-# Sidebar สำหรับการเลือกและการจัดการค่า
+# Sidebar สำหรับการเลือกค่า
 st.sidebar.title("เมนู")
 st.sidebar.selectbox("เลือกค่า Foo:", ["A", "B", "C"], key="foo")
 st.sidebar.checkbox("Bar", key="bar")
 
-# การเลือกหน้า
-page = st.sidebar.radio("เลือกหน้า:", ["หน้า 1", "หน้า 2"])
+# ปุ่มสำหรับการเปลี่ยนหน้า
+if st.button("ไปที่หน้า 1"):
+    st.session_state.current_page = "page1"
+
+if st.button("ไปที่หน้า 2"):
+    st.session_state.current_page = "page2"
+
+# กำหนดค่าเริ่มต้นของหน้าเมื่อเริ่มต้น
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "page1"
 
 # แสดงเนื้อหาตามหน้า
-if page == "หน้า 1":
+if st.session_state.current_page == "page1":
     page1()
 else:
     page2()
