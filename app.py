@@ -127,40 +127,38 @@ def page1():
             st.write("Please upload an image or take a picture to see the prediction.")
 
     def display_image_table():
-    # ข้อมูลสำหรับตาราง (2x2)
-    table_data = [
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fdark%20(1).png?alt=media&token=5d626d79-7203-43f9-9a14-345d94f20935", 
-         "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fgreen%20(2).png?alt=media&token=a475026b-e69a-4713-b9a2-96d7fadfcb2b"],
-        ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Flight%20(1).png?alt=media&token=b87e27d4-0dfd-4746-a713-6ec2567d819d", 
-         "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fmedium%20(1).png?alt=media&token=3f661e8a-bf6c-4061-9a6d-19bb9994c151"]
-    ]
-    
-    # สร้างปุ่มสำหรับแสดงตาราง
-    if st.button("Show Image Example"):
-        # ตั้งค่าให้แสดงตารางเป็น True
-        st.session_state.show_table = True
+        # ข้อมูลสำหรับตาราง (2x2)
+        table_data = [
+            ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fdark%20(1).png?alt=media&token=5d626d79-7203-43f9-9a14-345d94f20935", 
+             "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fgreen%20(2).png?alt=media&token=a475026b-e69a-4713-b9a2-96d7fadfcb2b"],
+            ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Flight%20(1).png?alt=media&token=b87e27d4-0dfd-4746-a713-6ec2567d819d", 
+             "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fmedium%20(1).png?alt=media&token=3f661e8a-bf6c-4061-9a6d-19bb9994c151"]
+        ]
+        
+        # สร้างปุ่มสำหรับแสดงตาราง
+        if st.button("Show Image Example"):
+            # ตั้งค่าให้แสดงตารางเป็น True
+            st.session_state.show_table = True
 
-    # แสดงตารางถ้าสถานะ show_table เป็น True
-    if st.session_state.get("show_table", False):
-        st.subheader("Image Table")
+        # แสดงตารางถ้าสถานะ show_table เป็น True
+        if st.session_state.get("show_table", False):
+            st.subheader("Image Table")
 
-        # ใช้ container เพื่อจัดกลาง
-        with st.container():
-            # สร้างคอลัมน์เพื่อจัดรูปภาพกลาง
-            cols = st.columns(len(table_data[0]))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
-            for row in table_data:
-                for col, item in zip(cols, row):
-                    # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
-                    if item.startswith("http"):
-                        col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
-                    else:
-                        col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
-            
-            st.markdown("See More : [https://drive.google.com/drive/folders/AI/รูปกาแฟคั่วถ่ายเอง+kaggle](https://drive.google.com/drive/folders/13mdUTt9wMn-swYButWDfugoCFJoA-DHo?usp=drive_link)")
+            # ใช้ container เพื่อจัดกลาง
+            with st.container():
+                # สร้างคอลัมน์เพื่อจัดรูปภาพกลาง
+                cols = st.columns(len(table_data[0]))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
+                for row in table_data:
+                    for col, item in zip(cols, row):
+                        # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
+                        if item.startswith("http"):
+                            col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
+                        else:
+                            col.write(item)  # แสดงข้อความถ้าไม่ใช่รูปภาพ
+                
+                st.markdown("See More : [https://drive.google.com/drive/folders/AI/รูปกาแฟคั่วถ่ายเอง+kaggle](https://drive.google.com/drive/folders/13mdUTt9wMn-swYButWDfugoCFJoA-DHo?usp=drive_link)")
 
-        # เรียกใช้ฟังก์ชันในหน้าหลัก
-        display_image_table()
-
+    display_image_table()
 
     st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
 
