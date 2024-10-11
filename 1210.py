@@ -1,17 +1,22 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-# เปลี่ยนสีพื้นหลังเป็นสีดำ
-st.markdown(
-    """
-    <style>
-    .reportview-container {
-        background-color: black;  /* สีพื้นหลังเป็นสีดำ */
-        color: white;  /* เปลี่ยนสีข้อความเป็นสีขาวเพื่อให้อ่านได้ชัดเจน */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# สร้างฟังก์ชันเพื่อแสดงพื้นหลังสีดำ
+def set_black_background():
+    components.html(
+        """
+        <style>
+        body {
+            background-color: black;
+            color: white; /* เปลี่ยนสีข้อความเป็นสีขาว */
+        }
+        </style>
+        """,
+        height=0,  # กำหนดความสูงเป็น 0 เพื่อไม่ให้มีส่วนแสดงผล
+    )
+
+# เรียกใช้ฟังก์ชัน
+set_black_background()
 
 st.title("Hello, Streamlit!")
-st.write("นี่คือแอป Streamlit ที่มีพื้นหลังสีดำ")
+st.write("นี่คือแอป Streamlit ที่มีพื้นหลังสีดำโดยใช้ไลบรารี components")
