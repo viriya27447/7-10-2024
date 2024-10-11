@@ -213,7 +213,7 @@ def page2():
     labels_url = st.text_input("Enter the labels URL:", 
         "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee-labels.txt?alt=media&token=7b5cd9d4-9c27-4008-a58d-5b0db0acd8f4")
 
-    # Validate URLs
+    # Validate URLs and load model/labels
     if st.button("Load Model and Labels"):
         if not is_valid_url(model_url):
             st.error("Invalid model URL. Please check the URL and try again.")
@@ -221,60 +221,66 @@ def page2():
             st.error("Invalid labels URL. Please check the URL and try again.")
         else:
             # Load model and labels
-            model = load_custom_model(model_url)
-            class_names = load_labels(labels_url)
+            st.session_state.model = load_custom_model(model_url)
+            st.session_state.class_names = load_labels(labels_url)
+            st.success("Model and labels loaded successfully!")
 
-            # Create columns for input and output
-            col1, col2 = st.columns(2)
+    # Check if the model and labels are loaded
+    if 'model' in st.session_state and 'class_names' in st.session_state:
+        model = st.session_state.model
+        class_names = st.session_state.class_names
+        
+        # Create columns for input and output
+        col1, col2 = st.columns(2)
 
-            with col1:
-                # Toggle between uploading an image and taking a picture
-                mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
+        with col1:
+            # Toggle between uploading an image and taking a picture
+            mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
 
-                uploaded_file = None
-                camera_file = None
-                class_name = ""
-                confidence_score = 0.0
+            uploaded_file = None
+            camera_file = None
+            class_name = ""
+            confidence_score = 0.0
 
-                if mode == "Upload Image":
-                    # Upload image (supports both PNG and JPG)
-                    uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
-                    if uploaded_file is not None:
-                        image = Image.open(uploaded_file)
-                        st.image(image, caption='Uploaded Image.', use_column_width=True)
+            if mode == "Upload Image":
+                # Upload image (supports both PNG and JPG)
+                uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+                if uploaded_file is not None:
+                    image = Image.open(uploaded_file)
+                    st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-                        # Make predictions
-                        prediction = predict(image, model, class_names)
-                        index = np.argmax(prediction)
-                        class_name = class_names[index].strip()
-                        confidence_score = prediction[0][index]
+                    # Make predictions
+                    prediction = predict(image, model, class_names)
+                    index = np.argmax(prediction)
+                    class_name = class_names[index].strip()
+                    confidence_score = prediction[0][index]
 
-                else:
-                    # Take a picture from the camera
-                    camera_file = st.camera_input("Take a picture")
-                    if camera_file is not None:
-                        image = Image.open(camera_file)
-                        st.image(image, caption='Captured Image.', use_column_width=True)
+            else:
+                # Take a picture from the camera
+                camera_file = st.camera_input("Take a picture")
+                if camera_file is not None:
+                    image = Image.open(camera_file)
+                    st.image(image, caption='Captured Image.', use_column_width=True)
 
-                        # Make predictions
-                        prediction = predict(image, model, class_names)
-                        index = np.argmax(prediction)
-                        class_name = class_names[index].strip()
-                        confidence_score = prediction[0][index]
+                    # Make predictions
+                    prediction = predict(image, model, class_names)
+                    index = np.argmax(prediction)
+                    class_name = class_names[index].strip()
+                    confidence_score = prediction[0][index]
 
-            with col2:
-                # This section is for displaying the prediction result
-                st.header("Prediction Result")
-                if mode == "Upload Image" and uploaded_file is not None:
-                    st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
-                    st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
-                elif mode == "Take a Picture" and camera_file is not None:
-                    st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
-                    st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
-                else:
-                    st.write("Please upload an image or take a picture to see the prediction.")
+        with col2:
+            # This section is for displaying the prediction result
+            st.header("Prediction Result")
+            if mode == "Upload Image" and uploaded_file is not None:
+                st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+                st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+            elif mode == "Take a Picture" and camera_file is not None:
+                st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+                st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+            else:
+                st.write("Please upload an image or take a picture to see the prediction.")
 
-            st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
+    st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
 
 # Create a sidebar for navigation
 st.sidebar.title("Navigation")
