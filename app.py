@@ -223,6 +223,11 @@ def page2():
                 # Toggle between uploading an image and taking a picture
                 mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
 
+                uploaded_file = None
+                camera_file = None
+                class_name = ""
+                confidence_score = 0.0
+
                 if mode == "Upload Image":
                     # Upload image (supports both PNG and JPG)
                     uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
@@ -300,7 +305,6 @@ def page2():
             display_image_table()
 
             st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
-
 
 pg = st.navigation([st.Page(page1), st.Page(page2)])
 pg.run()
