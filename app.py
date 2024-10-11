@@ -204,7 +204,7 @@ def page2():
         return prediction
 
     # Streamlit app section for page 2
-    st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Someting Classifier</h1>", unsafe_allow_html=True)
 
     # Input URLs for the model and labels
     model_url = st.text_input("Enter the model URL:", 
