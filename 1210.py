@@ -16,9 +16,10 @@ def page2():
     st.title("Page 2")
     st.write("ค่าที่เก็บใน session_state.bar: ", st.session_state.bar)
 
-# สร้างระบบการนำทาง
-page = st.selectbox("เลือกหน้า:", ["หน้า 1", "หน้า 2"])
+# สร้างการนำทางใน sidebar
+page = st.sidebar.selectbox("เลือกหน้า:", ["หน้า 1", "หน้า 2"])
 
+# แสดงเนื้อหาตามหน้า
 if page == "หน้า 1":
     page1()
 else:
