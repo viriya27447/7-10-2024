@@ -67,10 +67,6 @@ def update_visitor_count():
 # Streamlit app section
 st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
-# Update visitor count
-visitor_count = update_visitor_count()
-st.sidebar.write(f"Visitor Count: {visitor_count}")
-
 # Load model and labels
 model = load_custom_model()
 class_names = load_labels()
