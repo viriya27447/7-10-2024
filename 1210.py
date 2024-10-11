@@ -1,39 +1,20 @@
 import streamlit as st
 
-# กำหนดค่าเริ่มต้นใน session state
-if 'foo' not in st.session_state:
-    st.session_state.foo = "A"  # ค่าเริ่มต้น
-if 'bar' not in st.session_state:
-    st.session_state.bar = False  # ค่าเริ่มต้น
-
-# ฟังก์ชันสำหรับหน้า 1
-def page1():
+# สร้างฟังก์ชันสำหรับแต่ละหน้า
+def page_one():
     st.title("หน้า 1")
-    st.write("ค่าที่เลือกใน Foo:", st.session_state.foo)
+    st.write("ยินดีต้อนรับสู่หน้า 1!")
 
-# ฟังก์ชันสำหรับหน้า 2
-def page2():
+def page_two():
     st.title("หน้า 2")
-    st.write("สถานะของ Bar:", "เปิด" if st.session_state.bar else "ปิด")
+    st.write("ยินดีต้อนรับสู่หน้า 2!")
 
-# Sidebar สำหรับการเลือกค่า
+# เมนูด้านข้าง
 st.sidebar.title("เมนู")
-st.sidebar.selectbox("เลือกค่า Foo:", ["A", "B", "C"], key="foo")
-st.sidebar.checkbox("Bar", key="bar")
+page = st.sidebar.radio("เลือกหน้า:", ("หน้า 1", "หน้า 2"))
 
-# ปุ่มสำหรับการเปลี่ยนหน้า
-if st.button("ไปที่หน้า 1"):
-    st.session_state.current_page = "page1"
-
-if st.button("ไปที่หน้า 2"):
-    st.session_state.current_page = "page2"
-
-# กำหนดค่าเริ่มต้นของหน้าเมื่อเริ่มต้น
-if 'current_page' not in st.session_state:
-    st.session_state.current_page = "page1"
-
-# แสดงเนื้อหาตามหน้า
-if st.session_state.current_page == "page1":
-    page1()
+# แสดงหน้าตามที่เลือก
+if page == "หน้า 1":
+    page_one()
 else:
-    page2()
+    page_two()
