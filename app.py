@@ -6,7 +6,6 @@ from PIL import Image
 import requests
 import tempfile
 import os
-def page1():
 # Function to load the model while skipping 'groups' in DepthwiseConv2D
 def custom_depthwise_conv2d(*args, **kwargs):
     kwargs.pop('groups', None)  # Remove 'groups' if present in kwargs
@@ -161,9 +160,3 @@ def display_image_table():
 display_image_table()
 
 st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
-def page2():
-    st.write('hello2')
-
-pg = st.navigation([st.Page(page1), st.Page(page2)])
-pg.run()
-
