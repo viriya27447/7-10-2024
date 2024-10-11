@@ -282,11 +282,5 @@ def page2():
 
     st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
 
-# Create a sidebar for navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "About"])
-
-if page == "Home":
-    page1()
-elif page == "About":
-    page2()
+pg = st.navigation([st.Page(page1), st.Page(page2)])
+pg.run()
