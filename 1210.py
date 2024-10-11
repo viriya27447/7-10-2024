@@ -4,15 +4,13 @@ from PIL import Image
 # ตั้งค่าหน้าแอป
 st.set_page_config(page_title="Remove BG - AI Background Removal Tool", layout="wide")
 
-# ตั้งค่าพื้นหลัง
-st.markdown(
+# เปลี่ยนพื้นหลังด้วย st.write
+st.write(
     """
     <style>
-    .reportview-container {
+    body {
         background-color: #1E1E1E;
-    }
-    .sidebar .sidebar-content {
-        background-color: #1E1E1E;
+        color: white;
     }
     </style>
     """,
