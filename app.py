@@ -46,7 +46,7 @@ def page1():
         prediction = model.predict(data)
         return prediction
 
-    # Streamlit app section for page 2
+    # Streamlit app section for page 1
     st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
     # Load model and labels
@@ -108,113 +108,119 @@ def page1():
         else:
             st.write("Please upload an image or take a picture to see the prediction.")
 
-    st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
+    def display_image_table():
+        # ข้อมูลสำหรับตาราง (2x2)
+        table_data = [
+            ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fdark%20(1).png?alt=media&token=5d626d79-7203-43f9-9a14-345d94f20935", 
+             "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fgreen%20(2).png?alt=media&token=a475026b-e69a-4713-b9a2-96d7fadfcb2b"],
+            ["https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Flight%20(1).png?alt=media&token=b87e27d4-0dfd-4746-a713-6ec2567d819d", 
+             "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee%20exemple%20img%2Fmedium%20(1).png?alt=media&token=3f661e8a-bf6c-4061-9a6d-19bb9994c151"]
+        ]
+    
+        # ใช้ session state เพื่อควบคุมการแสดงผลของตาราง
+        if "show_table" not in st.session_state:
+            st.session_state.show_table = False  # ตั้งค่าเริ่มต้นเป็น False
+
+        # สร้างปุ่มสำหรับแสดงตาราง
+        if st.button("Image Example"):
+            st.session_state.show_table = True  # ตั้งค่าให้แสดงตารางเมื่อกดปุ่ม
+
+        # แสดงตารางถ้าสถานะ show_table เป็น True
+        if st.session_state.get("show_table", False):
+            st.subheader("Image Table")
+
+            # ใช้ container เพื่อจัดกลาง
+            with st.container():
+                # สร้างคอลัมน์เพื่อจัดรูปภาพกลาง
+                cols = st.columns(len(table_data[0]))  # สร้างคอลัมน์ตามจำนวนของข้อมูลในแถว
+                for row in table_data:
+                    for col, item in zip(cols, row):
+                        # ตรวจสอบว่าข้อมูลเป็น URL ของรูปภาพหรือไม่
+                        if item.startswith("http"):
+                            col.image(item, width=100)  # กำหนดขนาดรูปภาพเป็น 100 พิกเซล
+                        else:
+                            col.write(item  # แสดงข้อความถ้าไม่ใช่รูปภาพ
+            
+                # แสดงปุ่มซ่อนตาราง
+                if st.button("Hide Table"):
+                    st.session_state.show_table = False  # เปลี่ยนสถานะเป็น False เพื่อซ่อนตาราง
+                    st.experimental_rerun()  # รีเฟรชหน้าเพื่อล้างค่าตาราง
+
+    display_image_table()
+
 
 def page2():
-    # Function to load the model while skipping 'groups' in DepthwiseConv2D
-    def custom_depthwise_conv2d(*args, **kwargs):
-        kwargs.pop('groups', None)  # Remove 'groups' if present in kwargs
-        return tf.keras.layers.DepthwiseConv2D(*args, **kwargs)
-
-    # Load the model from an uploaded .h5 file
-    def load_custom_model(model_file):
-        temp_model_path = os.path.join(tempfile.gettempdir(), 'uploaded_model.h5')
-        with open(temp_model_path, 'wb') as f:
-            f.write(model_file.read())
-
-        # Load the model using custom_objects
-        model = load_model(temp_model_path, custom_objects={'DepthwiseConv2D': custom_depthwise_conv2d})
-        return model
-
-    # Load labels from the uploaded .txt file
-    def load_labels(labels_file):
-        class_names = labels_file.read().decode("utf-8").splitlines()
-        return class_names
-
-    # Function to make predictions
-    def predict(image, model, class_names):
-        image = image.resize((224, 224))
-        image_array = np.asarray(image)
-        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-        normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
-        data[0] = normalized_image_array
-
-        prediction = model.predict(data)
-        return prediction
-
     # Streamlit app section for page 2
-    st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Coffee Classifier with Custom Model</h1>", unsafe_allow_html=True)
 
-    # Upload model (.h5) and labels (.txt)
-    model_file = st.file_uploader("Upload the model (.h5 file)", type=["h5"])
-    labels_file = st.file_uploader("Upload the labels (.txt file)", type=["txt"])
+    uploaded_model_file = st.file_uploader("Upload your model file (.h5)", type=["h5"])
+    uploaded_labels_file = st.file_uploader("Upload your labels file (.txt)", type=["txt"])
 
-    # Check if both model and labels are uploaded
-    if model_file and labels_file:
-        # Load model and labels
-        st.session_state.model = load_custom_model(model_file)
-        st.session_state.class_names = load_labels(labels_file)
-        st.success("Model and labels loaded successfully!")
+    if uploaded_model_file is not None and uploaded_labels_file is not None:
+        # Save the uploaded model temporarily
+        model_temp_path = os.path.join(tempfile.gettempdir(), 'custom_coffee_model.h5')
+        with open(model_temp_path, 'wb') as f:
+            f.write(uploaded_model_file.read())
 
-    # Check if the model and labels are loaded
-    if 'model' in st.session_state and 'class_names' in st.session_state:
-        model = st.session_state.model
-        class_names = st.session_state.class_names
-        
-        # Create columns for input and output
-        col1, col2 = st.columns(2)
+        # Save the uploaded labels temporarily
+        labels_temp_path = os.path.join(tempfile.gettempdir(), 'custom_labels.txt')
+        with open(labels_temp_path, 'wb') as f:
+            f.write(uploaded_labels_file.read())
 
-        with col1:
-            # Toggle between uploading an image and taking a picture
-            mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
+        # Load the custom model
+        custom_model = load_model(model_temp_path, custom_objects={'DepthwiseConv2D': custom_depthwise_conv2d})
 
-            uploaded_file = None
-            camera_file = None
-            class_name = ""
-            confidence_score = 0.0
+        # Load custom labels
+        with open(labels_temp_path, 'r') as f:
+            custom_class_names = f.read().splitlines()
 
-            if mode == "Upload Image":
-                # Upload image (supports both PNG and JPG)
-                uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
-                if uploaded_file is not None:
-                    image = Image.open(uploaded_file)
-                    st.image(image, caption='Uploaded Image.', use_column_width=True)
+        # Image upload or take a picture for prediction
+        mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
 
-                    # Make predictions
-                    prediction = predict(image, model, class_names)
-                    index = np.argmax(prediction)
-                    class_name = class_names[index].strip()
-                    confidence_score = prediction[0][index]
+        uploaded_file = None
+        camera_file = None
+        class_name = ""
+        confidence_score = 0.0
 
-            else:
-                # Take a picture from the camera
-                camera_file = st.camera_input("Take a picture")
-                if camera_file is not None:
-                    image = Image.open(camera_file)
-                    st.image(image, caption='Captured Image.', use_column_width=True)
+        if mode == "Upload Image":
+            uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+            if uploaded_file is not None:
+                image = Image.open(uploaded_file)
+                st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-                    # Make predictions
-                    prediction = predict(image, model, class_names)
-                    index = np.argmax(prediction)
-                    class_name = class_names[index].strip()
-                    confidence_score = prediction[0][index]
+                # Make predictions
+                prediction = predict(image, custom_model, custom_class_names)
+                index = np.argmax(prediction)
+                class_name = custom_class_names[index].strip()
+                confidence_score = prediction[0][index]
 
-        with col2:
-            # This section is for displaying the prediction result
+                st.success("Image uploaded successfully!")
+
+        else:
+            camera_file = st.camera_input("Take a picture")
+            if camera_file is not None:
+                image = Image.open(camera_file)
+                st.image(image, caption='Captured Image.', use_column_width=True)
+
+                # Make predictions
+                prediction = predict(image, custom_model, custom_class_names)
+                index = np.argmax(prediction)
+                class_name = custom_class_names[index].strip()
+                confidence_score = prediction[0][index]
+
+                st.success("Picture captured successfully!")
+
+        # Display prediction results
+        if (mode == "Upload Image" and uploaded_file is not None) or (mode == "Take a Picture" and camera_file is not None):
             st.header("Prediction Result")
-            if mode == "Upload Image" and uploaded_file is not None:
-                st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
-                st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
-            elif mode == "Take a Picture" and camera_file is not None:
-                st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
-                st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
-            else:
-                st.write("Please upload an image or take a picture to see the prediction.")
+            st.write(f"Class: {class_name[2:]}")  # Display class name starting from the third character
+            st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+        else:
+            st.write("Please upload an image or take a picture to see the prediction.")
 
-    st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
-
-# ใช้ st.sidebar เพื่อให้เลือกหน้าได้
-page = st.sidebar.radio("Select Page", ["Page 1", "Page 2"])
+# Navigation
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to", ("Page 1", "Page 2"))
 
 if page == "Page 1":
     page1()
