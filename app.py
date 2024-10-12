@@ -215,6 +215,7 @@ def page2():
             st.write("Please take a picture or upload an image to see the prediction.")
 
     st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
-
+    st.markdown("Agricultural crops image classification : [here](https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%83%E0%B8%AA%E0%B9%88%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5%E0%B9%80%E0%B8%97%E0%B8%A3%E0%B8%99%2FAgricultural-crops%20(2).zip?alt=media&token=b8873ba9-95e4-497f-be09-fd0afe738b77)")
+    st.markdown("Cat-Dog image classification : [here](https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%83%E0%B8%AA%E0%B9%88%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5%E0%B9%80%E0%B8%97%E0%B8%A3%E0%B8%99%2Fcat-dog121067%20(2).zip?alt=media&token=c7299649-9e65-4447-8406-cf178bc47ecf)")
 pg = st.navigation([st.Page(page1), st.Page(page2)])
 pg.run()
