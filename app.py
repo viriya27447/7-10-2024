@@ -184,62 +184,57 @@ def page2():
     # Streamlit app section for page 2
     st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
-    # Load the model and labels
+    # Upload the model and labels
+    uploaded_model = st.file_uploader("Upload your model (.h5)", type=["h5"])
+    uploaded_labels = st.file_uploader("Upload your labels (.txt)", type=["txt"])
+
     model = None
     class_names = []
 
+    if uploaded_model is not None and uploaded_labels is not None:
+        model = load_custom_model(uploaded_model)
+        class_names = load_labels(uploaded_labels)
+
+        st.success("Model and labels uploaded successfully!")
+
     # Create columns for input and output
-    col1, col2 = st.columns(2)
+    st.markdown("### Select Mode")
+    mode = st.radio("Choose Input Mode", ["Upload Image", "Take a Picture"])
 
-    with col1:
-        # Upload the model and labels
-        uploaded_model = st.file_uploader("Upload your model (.h5)", type=["h5"])
-        uploaded_labels = st.file_uploader("Upload your labels (.txt)", type=["txt"])
+    class_name = ""
+    confidence_score = 0.0
+    uploaded_file = None
+    camera_file = None
 
-        if uploaded_model is not None and uploaded_labels is not None:
-            model = load_custom_model(uploaded_model)
-            class_names = load_labels(uploaded_labels)
+    if mode == "Upload Image":
+        # Upload image (supports both PNG and JPG)
+        uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file)
+            st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-            st.success("Model and labels uploaded successfully!")
+            # Make predictions if the model is loaded
+            if model is not None:
+                prediction = predict(image, model, class_names)
+                index = np.argmax(prediction)
+                class_name = class_names[index].strip()
+                confidence_score = prediction[0][index]
+                st.success("Image uploaded successfully!")
 
-    with col2:
-        # Toggle between uploading an image and taking a picture
-        mode = st.radio("Select Mode", ["Upload Image", "Take a Picture"])
+    else:
+        # Take a picture from the camera
+        camera_file = st.camera_input("Take a picture")
+        if camera_file is not None:
+            image = Image.open(camera_file)
+            st.image(image, caption='Captured Image.', use_column_width=True)
 
-        class_name = ""
-        confidence_score = 0.0
-        uploaded_file = None
-        camera_file = None
-
-        if mode == "Upload Image":
-            # Upload image (supports both PNG and JPG)
-            uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg"])
-            if uploaded_file is not None:
-                image = Image.open(uploaded_file)
-                st.image(image, caption='Uploaded Image.', use_column_width=True)
-
-                # Make predictions if the model is loaded
-                if model is not None:
-                    prediction = predict(image, model, class_names)
-                    index = np.argmax(prediction)
-                    class_name = class_names[index].strip()
-                    confidence_score = prediction[0][index]
-                    st.success("Image uploaded successfully!")
-
-        else:
-            # Take a picture from the camera
-            camera_file = st.camera_input("Take a picture")
-            if camera_file is not None:
-                image = Image.open(camera_file)
-                st.image(image, caption='Captured Image.', use_column_width=True)
-
-                # Make predictions if the model is loaded
-                if model is not None:
-                    prediction = predict(image, model, class_names)
-                    index = np.argmax(prediction)
-                    class_name = class_names[index].strip()
-                    confidence_score = prediction[0][index]
-                    st.success("Picture captured successfully!")
+            # Make predictions if the model is loaded
+            if model is not None:
+                prediction = predict(image, model, class_names)
+                index = np.argmax(prediction)
+                class_name = class_names[index].strip()
+                confidence_score = prediction[0][index]
+                st.success("Picture captured successfully!")
 
     # Display prediction results
     st.header("Prediction Result")
@@ -250,9 +245,6 @@ def page2():
         st.write("Please take a picture or upload an image to see the prediction.")
 
     st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
-
-# Main section of the Streamlit app
-st.set_page_config(page_title="Coffee Classifier", layout="wide")
 
 # Create navigation for pages
 page = st.sidebar.selectbox("Select a page", ["Page 1", "Page 2"])
