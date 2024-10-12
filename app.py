@@ -3,17 +3,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from PIL import Image
-import requests
 import tempfile
 import os
-
-# Function to validate URL
-def is_valid_url(url):
-    try:
-        response = requests.head(url)
-        return response.status_code == 200
-    except Exception:
-        return False
 
 def page1():
     st.write("Welcome to the Coffee Classifier App! Please navigate to Page 2 to classify coffee images.")
@@ -24,24 +15,19 @@ def page2():
         kwargs.pop('groups', None)  # Remove 'groups' if present in kwargs
         return tf.keras.layers.DepthwiseConv2D(*args, **kwargs)
 
-    # Load the model from the URL
-    @st.cache_resource
-    def load_custom_model(model_url):
-        temp_model_path = os.path.join(tempfile.gettempdir(), 'coffee_model.h5')
-
-        # Download the model file from the URL
-        response = requests.get(model_url)
+    # Load the model from an uploaded .h5 file
+    def load_custom_model(model_file):
+        temp_model_path = os.path.join(tempfile.gettempdir(), 'uploaded_model.h5')
         with open(temp_model_path, 'wb') as f:
-            f.write(response.content)
+            f.write(model_file.read())
 
         # Load the model using custom_objects
         model = load_model(temp_model_path, custom_objects={'DepthwiseConv2D': custom_depthwise_conv2d})
         return model
 
-    # Load labels from the URL
-    def load_labels(labels_url):
-        response = requests.get(labels_url)
-        class_names = response.text.splitlines()
+    # Load labels from the uploaded .txt file
+    def load_labels(labels_file):
+        class_names = labels_file.read().decode("utf-8").splitlines()
         return class_names
 
     # Function to make predictions
@@ -58,24 +44,16 @@ def page2():
     # Streamlit app section for page 2
     st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
 
-    # Input URLs for the model and labels
-    model_url = st.text_input("Enter the model URL:", 
-        "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/12102024.h5?alt=media&token=8cdfbf0a-4ec6-4e59-bd35-d420890f8166")
-    
-    labels_url = st.text_input("Enter the labels URL:", 
-        "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee-labels.txt?alt=media&token=7b5cd9d4-9c27-4008-a58d-5b0db0acd8f4")
+    # Upload model (.h5) and labels (.txt)
+    model_file = st.file_uploader("Upload the model (.h5 file)", type=["h5"])
+    labels_file = st.file_uploader("Upload the labels (.txt file)", type=["txt"])
 
-    # Validate URLs and load model/labels
-    if st.button("Load Model and Labels"):
-        if not is_valid_url(model_url):
-            st.error("Invalid model URL. Please check the URL and try again.")
-        elif not is_valid_url(labels_url):
-            st.error("Invalid labels URL. Please check the URL and try again.")
-        else:
-            # Load model and labels
-            st.session_state.model = load_custom_model(model_url)
-            st.session_state.class_names = load_labels(labels_url)
-            st.success("Model and labels loaded successfully!")
+    # Check if both model and labels are uploaded
+    if model_file and labels_file:
+        # Load model and labels
+        st.session_state.model = load_custom_model(model_file)
+        st.session_state.class_names = load_labels(labels_file)
+        st.success("Model and labels loaded successfully!")
 
     # Check if the model and labels are loaded
     if 'model' in st.session_state and 'class_names' in st.session_state:
