@@ -184,15 +184,17 @@ def page2():
     # Streamlit app section for page 2
     st.markdown("<h1 style='text-align: center;'>Upload Your Own Model</h1>", unsafe_allow_html=True)
 
+    # Load the model and labels
+    model = None
+    class_names = []
+
+    # Create columns for input and output
     col1, col2 = st.columns(2)
 
     with col1:
-        # Upload the model
+        # Upload the model and labels
         uploaded_model = st.file_uploader("Upload your model (.h5)", type=["h5"])
         uploaded_labels = st.file_uploader("Upload your labels (.txt)", type=["txt"])
-
-        class_names = []
-        model = None
 
         if uploaded_model is not None and uploaded_labels is not None:
             model = load_custom_model(uploaded_model)
@@ -206,41 +208,46 @@ def page2():
         camera_file = st.camera_input("Take a picture")
         uploaded_file = st.file_uploader("Or upload an image...", type=["png", "jpg"])
 
+        class_name = ""
+        confidence_score = 0.0
+
+        # Check if a picture is taken or an image is uploaded
         if camera_file is not None:
             image = Image.open(camera_file)
             st.image(image, caption='Captured Image.', use_column_width=True)
 
-            # Make predictions
+            # Make predictions if the model is loaded
             if model is not None:
                 prediction = predict(image, model, class_names)
                 index = np.argmax(prediction)
                 class_name = class_names[index].strip()
                 confidence_score = prediction[0][index]
-
                 st.success("Picture captured successfully!")
-                st.write(f"Class: {class_name}")  # Display class name
-                st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
 
         elif uploaded_file is not None:
             image = Image.open(uploaded_file)
             st.image(image, caption='Uploaded Image.', use_column_width=True)
 
-            # Make predictions
+            # Make predictions if the model is loaded
             if model is not None:
                 prediction = predict(image, model, class_names)
                 index = np.argmax(prediction)
                 class_name = class_names[index].strip()
                 confidence_score = prediction[0][index]
-
                 st.success("Image uploaded successfully!")
-                st.write(f"Class: {class_name}")  # Display class name
-                st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+
+    # Display prediction results
+    st.header("Prediction Result")
+    if class_name:
+        st.write(f"Class: {class_name}")  # Display class name
+        st.write(f"Confidence: {confidence_score * 100:.2f}%")  # Display as percentage
+    else:
+        st.write("Please take a picture or upload an image to see the prediction.")
 
     st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
 
 # Main section of the Streamlit app
 st.set_page_config(page_title="Coffee Classifier", layout="wide")
-st.title("Coffee Classifier")
 
 # Create navigation for pages
 page = st.sidebar.selectbox("Select a page", ["Page 1", "Page 2"])
