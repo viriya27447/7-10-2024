@@ -250,10 +250,5 @@ def page2():
 
     st.write('Presented by : Group 5 Student ID 65050225,65050686,65050378,65050838')
 
-# Create navigation for pages
-page = st.sidebar.selectbox("Select a page", ["Page 1", "Page 2"])
-
-if page == "Page 1":
-    page1()
-else:
-    page2()
+pg = st.navigation([st.Page(page1), st.Page(page2)])
+pg.run()
