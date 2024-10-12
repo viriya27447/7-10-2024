@@ -6,7 +6,14 @@ from PIL import Image
 import requests
 import tempfile
 import os
+import validators
 
+def is_valid_url(url):
+    if validators.url(url):
+        return True
+    else:
+        return False
+    
 def page1():
     # Function to load the model while skipping 'groups' in DepthwiseConv2D
     def custom_depthwise_conv2d(*args, **kwargs):
