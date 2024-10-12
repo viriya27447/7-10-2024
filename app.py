@@ -182,7 +182,7 @@ def page2():
         return prediction
 
     # Streamlit app section for page 2
-    st.markdown("<h1 style='text-align: center;'>Coffee Classifier</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Upload Your Own Model</h1>", unsafe_allow_html=True)
 
     # Upload the model and labels
     uploaded_model = st.file_uploader("Upload your model (.h5)", type=["h5"])
