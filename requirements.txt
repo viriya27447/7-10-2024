@@ -5,3 +5,4 @@ Pillow
 requests
 pandas
 matplotlib
+validators
