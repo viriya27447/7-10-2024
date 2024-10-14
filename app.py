@@ -8,11 +8,7 @@ import tempfile
 import os
 
 def page1():
-    def my_custom_depthwise_conv2d(*inputs, **options):
-        options.pop('groups', None)
-        return tf.keras.layers.DepthwiseConv2D(*inputs, **options)
-
-
+    
     # Load the model from the embedded URL
     @st.cache_resource
     def load_custom_model():
