@@ -218,6 +218,11 @@ def page2():
 
 st.set_page_config(page_title="Coffee Classifier", page_icon="☕")
 
-# Run the app 
-pg = st.navigation([st.Page(page1), st.Page(page2)]) 
-pg.run() 
+# Add a sidebar to navigate between pages
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to", ["Coffee Classifier", "Upload Your Own Model"])
+
+if page == "Coffee Classifier":
+    page1()
+else:
+    page2()
