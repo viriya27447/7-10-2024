@@ -16,7 +16,7 @@ def page1():
     # Load the model from the embedded URL
     @st.cache_resource
     def load_custom_model():
-        model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/coffee_Model.h5?alt=media&token=ae8a0858-1be8-44bd-8d78-909c0b3be1d3"
+        model_url = "https://firebasestorage.googleapis.com/v0/b/project-5195649815793865937.appspot.com/o/12102024.h5?alt=media&token=8cdfbf0a-4ec6-4e59-bd35-d420890f8166"
         temp_model_path = os.path.join(tempfile.gettempdir(), 'coffee_model.h5')
 
         response = requests.get(model_url)
